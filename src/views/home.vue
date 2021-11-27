@@ -4,7 +4,9 @@
       <menus />
     </div>
     <div class="main-container">
-      我是内容
+      <div class="mail-title">
+        <mytitle />
+      </div>
     </div>
   </div>
 </template>
@@ -12,11 +14,12 @@
 <script>
 // @ is an alias to /src
 import menus from './layout/menus'
+import mytitle from './layout/title'
 
 export default {
   name: 'Home',
   components: {
-    menus
+    menus, mytitle
   }
 }
 </script>
@@ -43,5 +46,10 @@ export default {
 }
 .main-container{
   flex: 1;
+}
+.mail-title{
+  width: 100%;
+  height: 64px;
+  background-color: #2c3e50;
 }
 </style>

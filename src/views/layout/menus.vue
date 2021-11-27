@@ -127,8 +127,9 @@ export default {}
   margin-left: 10px;
 }
 .menu-version{
-  background-color: rgba(255,255,255,.1)!important;
+  background-color: rgba(255,255,255,.03)!important;
   margin-bottom: 5px;
+  line-height: 20px;
 }
 .menu-list{
   display: flex;
