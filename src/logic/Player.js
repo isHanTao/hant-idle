@@ -1,130 +1,393 @@
-/* eslint-disable */
-function init () {
-  const player = new Player()
-
-  const yitianjian = new Thing('倚天剑', '', '100', 2)
-  const yitianjian2 = new Thing('屠龙剑', '', '50', 2)
-  const yitianjian3 = new Thing('倚天剑', '', '100', 2)
-  player.bag.push(yitianjian)
-  player.bag.push(yitianjian2)
-  player.bag.push(yitianjian3)
-  console.log(player.toString())
-}
-
 class Player {
-    attack = 1;
-    strength = 1;
-    defence = 1;
-    hitpoints = 100;
-    bag = new Bag();
+  basePanel = {
+    attack: 1,
+    strength: 1,
+    defence: 1,
+    hitpoints: 100,
+    life: 100,
+    attack_interval: 2000
+  }
+  panel = this.basePanel
+  bag = new Bag();
+  res = new Resource();
+  wear = {
+    weapon: null,
+    pauldron: null,
+    cuirass: null,
+    wrister: null,
+    shoes: null,
+    ring: null,
+    necklace: null,
+    cloak: null,
+  }
 
-    toString () {
-      return `攻击力：${this.attack}
-力量：${this.attack}
-防御：${this.defence}
-生命值：${this.hitpoints}
-背包：${this.bag}`
+
+  // 穿装备
+  wearEquipment(equipment) {
+    switch (equipment.type) {
+      case 1:
+        this.wear.weapon = equipment;
+        this.bag.remove(equipment);
+        break
+      case 2:
+        this.wear.pauldron = equipment;
+        this.bag.remove(equipment);
+        break
+      case 3:
+        this.wear.cuirass = equipment;
+        this.bag.remove(equipment);
+        break
+      case 4:
+        this.wear.wrister = equipment;
+        this.bag.remove(equipment);
+        break
+      case 5:
+        this.wear.shoes = equipment;
+        this.bag.remove(equipment);
+        break
+      case 6:
+        this.wear.ring = equipment;
+        this.bag.remove(equipment);
+        break
+      case 7:
+        this.wear.necklace = equipment;
+        this.bag.remove(equipment);
+        break
+      case 8:
+        this.wear.cloak = equipment;
+        this.bag.remove(equipment);
+        break
     }
+    this.countPanel()
+  }
+
+  // 脱装备
+  disWearEquipment(equipment) {
+    switch (equipment.type) {
+      case 1:
+        this.wear.weapon = null;
+        this.bag.push(equipment);
+        break
+      case 2:
+        this.wear.pauldron = null;
+        this.bag.push(equipment);
+        break
+      case 3:
+        this.wear.cuirass = null;
+        this.bag.push(equipment);
+        break
+      case 4:
+        this.wear.wrister = null;
+        this.bag.push(equipment);
+        break
+      case 5:
+        this.wear.shoes = null;
+        this.bag.push(equipment);
+        break
+      case 6:
+        this.wear.ring = null;
+        this.bag.push(equipment);
+        break
+      case 7:
+        this.wear.necklace = null;
+        this.bag.push(equipment);
+        break
+      case 8:
+        this.wear.cloak = null;
+        this.bag.push(equipment);
+        break
+    }
+    this.countPanel()
+  }
+
+  // 计算面板
+  countPanel() {
+    this.panel = this.basePanel
+    for (let key in this.wear) {
+      if (this.wear[key] !== null) {
+        this.panel.attack += this.wear[key].attack
+        this.panel.attack_interval -= this.wear[key].attack_interval
+        this.panel.defence += this.wear[key].defence
+        this.panel.strength += this.wear[key].strength
+        this.panel.life += this.wear[key].life
+      }
+    }
+  }
+
+  // 获取面板字符串
+  getPanelString(){
+    return `面板：
+攻击力：${this.panel.attack}
+力量：${this.panel.attack}
+防御：${this.panel.defence}
+生命值：${this.panel.hitpoints}/${this.panel.life} \n`
+  }
+  // 获取装备字符串
+  getEquipmentString() {
+    let str = '装备：\n';
+    str += '武器：' + (this.wear.weapon ?? '无') + '\n'
+    str += '肩甲：' + (this.wear.pauldron ?? '无') + '\n'
+    str += '胸甲：' + (this.wear.cuirass ?? '无') + '\n'
+    str += '护腕：' + (this.wear.wrister ?? '无') + '\n'
+    str += '鞋：' + (this.wear.shoes ?? '无') + '\n'
+    str += '戒指：' + (this.wear.ring ?? '无') + '\n'
+    str += '项链：' + (this.wear.necklace ?? '无') + '\n'
+    str += '披风：' + (this.wear.cloak ?? '无') + '\n'
+    return str
+  }
+  toString() {
+    return `
+${this.getPanelString()}
+背包：${this.bag}
+${this.getEquipmentString()}
+${this.res}`
+  }
 }
 
 class Bag {
-    length = 20;
-    items = [];
+  length = 20;
+  items = [];
 
-    // 将物品放入背包
-    push (thing) {
-      const index = this.getItemIndex(thing.hash)
-      if (index !== -1) {
-        this.items[index].add()
-      } else {
-        this.items.push(new BagItem(thing))
-      }
+  // 将物品放入背包
+  push(thing, num = 1) {
+    const index = this.getItemIndex(thing.hash)
+    if (index !== -1) {
+      this.items[index].add(num)
+    } else {
+      this.items.push(new BagItem(thing, num))
     }
+  }
 
-    removeAll (thing) {
-      const index = this.getItemIndex(thing.hash)
-      if (index !== -1) {
+  removeAll(thing) {
+    const index = this.getItemIndex(thing.hash)
+    if (index !== -1) {
+      this.items.splice(index, 1)
+    }
+  }
+
+  remove(thing, size = 1) {
+    const index = this.getItemIndex(thing.hash)
+    if (index !== -1) {
+      const res = this.items[index].reduce(size)
+      if (!res) {
         this.items.splice(index, 1)
       }
     }
+  }
 
-    remove (thing, size = 1) {
-      const index = this.getItemIndex(thing.hash)
-      if (index !== -1) {
-        const res = this.items[index].reduce(size)
-        if (!res) {
-          this.items.splice(index, 1)
-        }
+  getItemIndex(hash) {
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.items[i].thing.hash === hash) {
+        return i
       }
     }
+    return -1
+  }
 
-    getItemIndex (hash) {
-      for (let i = 0; i < this.items.length; i++) {
-        if (this.items[i].thing.hash === hash) {
-          return i
-        }
-      }
-      return -1
-    }
-
-    toString () {
-      let str = '\n'
-      this.items.forEach((item) => {
-        str += '    ' + item.thing.name + '(' + item.length + ') \n'
-      })
-      return str
-    }
+  toString() {
+    let str = '(' + this.items.length + '/' + this.length + ')\n'
+    this.items.forEach((item) => {
+      str += '    ' + item.thing.name + '(' + item.length + ') \n'
+    })
+    return str;
+  }
 }
 
 class BagItem {
-    length = 1;
-    thing = {};
+  length = 1;
+  thing = {};
 
-    constructor (thing) {
-      this.thing = thing
-    }
+  constructor(thing, length = 1) {
+    this.thing = thing
+    this.length = length
+  }
 
-    add (num = 1) {
-      this.length += num
-    }
+  add(num = 1) {
+    this.length += num
+  }
 
-    reduce (num = 1) {
-      if (this.length - num < 1) {
-        this.length = 0
-        return false
-      } else {
-        this.length -= num
-        return true
-      }
+  reduce(num = 1) {
+    if (this.length - num < 1) {
+      this.length = 0
+      return false;
+    } else {
+      this.length -= num
+      return true
     }
+  }
+
 }
 
 class Thing {
-    // 1，物品 2，装备
-    type = 1
-    name = ''
-    hash = ''
-    avatar = 'img'
-    price = 0
+  // 1，物品 2，装备 3 Enemy, 4 食物
+  type = 1
+  name = ''
+  hash = ''
+  avatar = 'img'
+  price = 0
 
-    constructor (name, avatar, price = 0, type = 1) {
-      this.name = name
-      this.avatar = avatar
-      this.price = price
-      this.type = type
-      this.hash = getHashCode(this.name)
-    }
+  constructor(name, avatar, price = 0, type = 1) {
+    this.name = name
+    this.avatar = avatar
+    this.price = price
+    this.type = type
+    this.hash = getHashCode(this.name)
+  }
+
+  toString() {
+    return this.name
+  }
+}
+
+class Equipment extends Thing {
+  // 1， 武器 2 肩胛 3 胸甲 4 护腕 6 鞋子 7 戒指 8 项链 9 披风
+  type = 1;
+  attack = 1;
+  strength = 1;
+  defence = 1;
+  life = 10;
+  attack_interval = 0;
+
+  constructor(type, name, avatar, price, attack, strength, defence, life, attack_interval = 0) {
+    super(name, avatar, price, 2);
+    this.attack = attack;
+    this.type = type;
+    this.attack_interval = attack_interval;
+    this.strength = strength;
+    this.defence = defence;
+    this.life = life;
+  }
+  toString(){
+    return `${this.name}(攻击：${this.attack},力量：${this.strength},防御：${this.defence},生命：${this.life},攻击间隔：${this.attack_interval})`
+  }
+}
+
+class Food extends Thing {
+  attack = 0;
+  strength = 0;
+  defence = 0;
+  hitpoints = 100;
+
+  constructor(name, avatar, price, hitpoints, attack = 0, strength = 0, defence = 0) {
+    super(name, avatar, price, 4);
+    this.attack = attack;
+    this.strength = strength;
+    this.defence = defence;
+    this.hitpoints = hitpoints;
+  }
 }
 
 class Resource {
+  equipments = [
+    [1, '新手剑', '',   1, 10, 10, 0, 0],
+    [2, '新手肩甲', '',  1, 0, 2, 3, 10, 200],
+    [3, '新手胸甲', '',  1, 0, 0, 5, 20],
+    [4, '新手护腕', '',  1, 0, 5, 5, 200],
+    [5, '新手鞋', '',    1, 0, 5, 2, 2, 50],
+    [6, '新手戒指', '',   1, 0, 8, 0, 0, 300],
+    [7, '新手项链', '',   1, 0, 5, 0, 2, 200],
+    [8, '新手披风', '',   1, 0, 0, 0, 2, 200],
+  ]
+  things = [['普通原木', '', 5, 1], ['橡木', '', 10, 1], ['杉木', '', 15, 1]]
+  foods = [
+    ['小红药', '', 10, 50],
+    ['中红药', '', 10, 50],
+    ['大红药', '', 10, 50],
+  ]
 
-}
+  // 容器对象
+  beans = new Map()
 
-function getHashCode (str) {
-  let hash = 1315423911; let i; let ch
-  for (i = str.length - 1; i >= 0; i--) {
-    ch = str.charCodeAt(i)
-    hash ^= ((hash << 5) + ch + (hash >> 2))
+  constructor() {
+    this.init()
   }
-  return (hash & 0x7FFFFFFF)
+
+  init() {
+    this.initThings()
+    this.initEquipments()
+    this.initFoods()
+  }
+
+  initThings() {
+    this.things.forEach((thing) => {
+      this.add(new Thing(...thing))
+    })
+  }
+
+  initEquipments() {
+    this.equipments.forEach((thing) => {
+      this.add(new Equipment(...thing))
+    })
+  }
+
+  initFoods() {
+    this.foods.forEach((thing) => {
+      this.add(new Food(...thing))
+    })
+  }
+
+  add(thing) {
+    this.beans.set(thing.hash, thing)
+  }
+
+  get(name) {
+    return this.beans.get(getHashCode(name))
+  }
+
+  toString() {
+    let str = '容器：\n'
+    this.beans.forEach(thing => {
+      str += thing + '\n'
+    })
+    return str
+  }
+
 }
+
+class Enemy extends Thing {
+  attack = 1;
+  strength = 1;
+  defence = 1;
+  hitpoints = 100;
+  attack_interval = 2000;
+
+  constructor(name, avatar, attack, strength, defence, hitpoints, attack_interval) {
+    super(name, avatar, 0, 3);
+    this.attack = attack
+    this.strength = strength
+    this.defence = defence
+    this.hitpoints = hitpoints
+    this.attack_interval = attack_interval
+  }
+}
+
+function getHashCode(str) {
+  let hash = 1315423911, i, ch;
+  for (i = str.length - 1; i >= 0; i--) {
+    ch = str.charCodeAt(i);
+    hash ^= ((hash << 5) + ch + (hash >> 2));
+  }
+  return (hash & 0x7FFFFFFF);
+}
+
+(function init() {
+  const player = new Player()
+  player.bag.push(player.res.get('新手剑'))
+  player.bag.push(player.res.get('新手肩甲'))
+  player.bag.push(player.res.get('新手胸甲'))
+  player.bag.push(player.res.get('新手护腕'))
+  player.bag.push(player.res.get('新手鞋'))
+  player.bag.push(player.res.get('新手戒指'))
+  player.bag.push(player.res.get('新手项链'))
+  player.bag.push(player.res.get('新手披风'))
+  player.bag.push(player.res.get('小红药'), 20)
+  player.wearEquipment(player.res.get('新手剑'))
+  player.wearEquipment(player.res.get('新手肩甲'))
+  player.wearEquipment(player.res.get('新手胸甲'))
+  player.wearEquipment(player.res.get('新手护腕'))
+  player.wearEquipment(player.res.get('新手鞋'))
+  player.wearEquipment(player.res.get('新手戒指'))
+  player.wearEquipment(player.res.get('新手项链'))
+  player.wearEquipment(player.res.get('新手披风'))
+  console.log(player.toString())
+})()
