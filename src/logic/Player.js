@@ -1,4 +1,5 @@
 /* eslint-disable */
+// 玩家
 class Player {
   basePanel = {
     attack: 1,
@@ -225,6 +226,7 @@ ${this.res}`
   }
 }
 
+// 背包
 class Bag {
   length = 20;
   items = [];
@@ -284,6 +286,7 @@ class Bag {
   }
 }
 
+// 背包格子
 class BagItem {
   length = 1;
   thing = {};
@@ -309,6 +312,7 @@ class BagItem {
 
 }
 
+// 基类
 class Thing {
   // 1，物品 2，装备 3 Enemy, 4 食物
   type = 1
@@ -330,9 +334,10 @@ class Thing {
   }
 }
 
+// 装备
 class Equipment extends Thing {
   // 1， 武器 2 肩胛 3 胸甲 4 护腕 6 鞋子 7 戒指 8 项链 9 披风
-  type = 1;
+  equ_type = 1;
   attack = 1;
   strength = 1;
   defence = 1;
@@ -342,7 +347,7 @@ class Equipment extends Thing {
   constructor(type, name, avatar, price, attack, strength, defence, life, attack_interval = 0) {
     super(name, avatar, price, 2);
     this.attack = attack;
-    this.type = type;
+    this.equ_type = type;
     this.attack_interval = attack_interval;
     this.strength = strength;
     this.defence = defence;
@@ -354,6 +359,7 @@ class Equipment extends Thing {
   }
 }
 
+// 食物
 class Food extends Thing {
   attack = 0;
   strength = 0;
@@ -373,6 +379,7 @@ class Food extends Thing {
   }
 }
 
+// 敌人
 class Enemy extends Thing {
   attack = 1;
   strength = 1;
@@ -399,7 +406,16 @@ class Enemy extends Thing {
   }
 }
 
+// 树
+class Wood extends Thing {
+  interval
+  constructor(name, avatar, price, type, interval) {
+    super(name, avatar, price, type);
+    this.interval = interval;
+  }
+}
 
+// 资源
 class Resource {
   equipments = [
     [1, '新手剑', '', 1, 10, 10, 0, 0, 100],
@@ -411,7 +427,8 @@ class Resource {
     [7, '新手项链', '', 1, 5, 0, 0, 0, -200],
     [8, '新手披风', '', 1, 5, 0, 0, 0, -200],
   ]
-  things = [['普通原木', '', 5, 1], ['橡木', '', 10, 1], ['杉木', '', 15, 1]]
+  woods = [['普通原木', '', 5, 1,1000], ['橡木', '', 10, 1,2000], ['杉木', '', 15, 1,3000]]
+
   foods = [
     ['小红药', '', 10, 50],
     ['中红药', '', 20, 100],
@@ -432,15 +449,15 @@ class Resource {
   }
 
   init() {
-    this.initThings()
+    this.initWoods()
     this.initEquipments()
     this.initFoods()
     this.initEnemies()
   }
 
-  initThings() {
-    this.things.forEach((thing) => {
-      this.add(new Thing(...thing))
+  initWoods() {
+    this.woods.forEach((thing) => {
+      this.add(new Wood(...thing))
     })
   }
 
@@ -481,6 +498,60 @@ class Resource {
 }
 
 
+
+class Fisher{
+  fishingAreas = new Map()
+
+  init(){
+    const areas = [
+      {name: '小树林', fresh: ['小虾米', '小龙虾']}
+    ]
+  }
+}
+
+// class Do{
+//     stats = 0
+// }
+
+// 伐木
+class Faller{
+  woodAreas = new Map()
+  player = null
+  timer = null
+  constructor(player) {
+    this.player = player
+    this.init()
+  }
+  start(area, tree, stop = false){
+    if (!this.timeout && this.haveTree(area,tree) || !stop){
+      this.timeout = setInterval(()=>{
+        console.log(this.player.bag.toString())
+        this.player.bag.push(this.getTree(tree))
+      },this.getTree(tree).interval)
+    }else {
+      clearInterval(this.timer)
+      return false
+    }
+  }
+  haveTree(area, tree){
+    return this.woodAreas.get(getHashCode(area)).tress.indexOf(tree) !== -1
+  }
+
+  getTree(tree){
+    return this.player.res.get(tree)
+  }
+
+  init(){
+    const areas = [
+      { name: '小树林', tress: ['普通原木', '橡木'], level: 1}
+    ]
+    areas.forEach(value => {
+      this.woodAreas.set(getHashCode(value.name), value)
+    })
+  }
+
+}
+
 function getHashCode(str) {
   let hash = 1315423911, i, ch;
   for (i = str.length - 1; i >= 0; i--) {
@@ -490,29 +561,9 @@ function getHashCode(str) {
   return (hash & 0x7FFFFFFF);
 }
 
+// 初始化
 (function init() {
   const player = new Player()
-  player.bag.push(player.res.get('新手剑'))
-  player.bag.push(player.res.get('新手肩甲'))
-  player.bag.push(player.res.get('新手胸甲'))
-  player.bag.push(player.res.get('新手护腕'))
-  player.bag.push(player.res.get('新手鞋'))
-  player.bag.push(player.res.get('新手戒指'))
-  player.bag.push(player.res.get('新手项链'))
-  player.bag.push(player.res.get('新手披风'))
-  player.bag.push(player.res.get('小红药'), 20)
-  player.bag.push(player.res.get('中红药'), 20)
-  player.wearEquipment(player.res.get('新手剑'))
-  player.wearEquipment(player.res.get('新手肩甲'))
-  player.wearEquipment(player.res.get('新手胸甲'))
-  player.wearEquipment(player.res.get('新手护腕'))
-  player.wearEquipment(player.res.get('新手鞋'))
-  player.wearEquipment(player.res.get('新手戒指'))
-  player.wearEquipment(player.res.get('新手项链'))
-  player.wearEquipment(player.res.get('新手披风'))
-  player.eatFood(player.res.get('中红药'))
-  player.eatFood(player.res.get('中红药'))
-  player.eatFood(player.res.get('中红药'))
-  player.eatFood(player.res.get('中红药'))
-  player.fighting(player.res.get('小哥布林'))
+  const faller = new Faller(player)
+  faller.start('小树林','普通原木')
 })()
