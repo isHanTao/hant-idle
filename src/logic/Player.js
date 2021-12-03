@@ -29,6 +29,44 @@ class Player {
     enemyProgress: 0,
   }
 
+
+
+  initDoing(){
+    this.initCutWood()
+  }
+
+  // 砍树相关
+  woodAreas = new Map()
+  timer = null
+  initCutWood(){
+    const areas = [
+      { name: '小树林', tress: ['普通原木', '橡木'], level: 1}
+    ]
+    areas.forEach(value => {
+      this.woodAreas.set(getHashCode(value.name), value)
+    })
+  }
+
+  cutWoodStart(area, tree, stop = false){
+    if (!this.timeout && this.haveTree(area,tree) || !stop){
+      this.timeout = setInterval(()=>{
+        console.log(this.bag.toString())
+        this.bag.push(this.getTree(tree))
+      },this.getTree(tree).interval)
+    }else {
+      clearInterval(this.timer)
+      return false
+    }
+  }
+  haveTree(area, tree){
+    return this.woodAreas.get(getHashCode(area)).tress.indexOf(tree) !== -1
+  }
+  getTree(tree){
+    return this.res.get(tree)
+  }
+
+
+
   // 吃食物
   eatFood(food) {
     if (this.bag.getCount(food) === -1) {
@@ -509,48 +547,6 @@ class Fisher{
   }
 }
 
-// class Do{
-//     stats = 0
-// }
-
-// 伐木
-class Faller{
-  woodAreas = new Map()
-  player = null
-  timer = null
-  constructor(player) {
-    this.player = player
-    this.init()
-  }
-  start(area, tree, stop = false){
-    if (!this.timeout && this.haveTree(area,tree) || !stop){
-      this.timeout = setInterval(()=>{
-        console.log(this.player.bag.toString())
-        this.player.bag.push(this.getTree(tree))
-      },this.getTree(tree).interval)
-    }else {
-      clearInterval(this.timer)
-      return false
-    }
-  }
-  haveTree(area, tree){
-    return this.woodAreas.get(getHashCode(area)).tress.indexOf(tree) !== -1
-  }
-
-  getTree(tree){
-    return this.player.res.get(tree)
-  }
-
-  init(){
-    const areas = [
-      { name: '小树林', tress: ['普通原木', '橡木'], level: 1}
-    ]
-    areas.forEach(value => {
-      this.woodAreas.set(getHashCode(value.name), value)
-    })
-  }
-
-}
 
 function getHashCode(str) {
   let hash = 1315423911, i, ch;
@@ -564,6 +560,6 @@ function getHashCode(str) {
 // 初始化
 (function init() {
   const player = new Player()
-  const faller = new Faller(player)
-  faller.start('小树林','普通原木')
+  player.freshStart('小树林','普通原木')
 })()
+
