@@ -1,6 +1,6 @@
 <template>
   <div class="menu-container">
-    <div class="menu-header">
+    <div class="menu-header" @click="$router.push('/')">
       <img class="menu-header-logo" src="../../assets/logo.png" alt="">
       <p class="menu-header-text">
         <b>HANT</b>
@@ -19,7 +19,7 @@
         <div class="gold">123456金币</div>
       </div>
 
-      <div class="menu-list-item">
+      <div class="menu-list-item" @click="$router.push('/bag')">
         <img class="hant-icon" src="../../assets/icon/bank_header.svg" alt="">
         <span class="menu-list-item-name">仓库</span>
         <div>58/65</div>
@@ -27,9 +27,9 @@
       <div class="menu-list-item">
         <span class="menu-list-item-name menu-list-item-back-text">面板</span>
       </div>
-      <div class="menu-list-item">
+      <div class="menu-list-item" @click="$router.push('battle')">
         <img class="hant-icon" src="../../assets/icon/combat.svg" alt="">
-        <span class="menu-list-item-name">战斗等级66</span>
+        <span class="menu-list-item-name">战斗等级 66</span>
       </div>
       <div class="menu-list-item">
         <img class="hant-icon" src="../../assets/icon/attack.svg" alt="">

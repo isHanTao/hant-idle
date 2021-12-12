@@ -38,5 +38,26 @@ body,html{
 .green{
   color: #42b983;
 }
+.flex1{
+  flex: 1;
+}
+.margin10{
+  margin: 0 10px;
+}
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width:2px;
+  background-color: #a9acac;
+}
 
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  border-radius:10px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius:10px;
+  background: #6c757d;
+}
 </style>

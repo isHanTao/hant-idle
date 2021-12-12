@@ -4,8 +4,11 @@
       <menus />
     </div>
     <div class="main-container">
-      <div class="mail-title">
+      <div class="main-title">
         <mytitle />
+      </div>
+      <div class="main-content">
+        <router-view />
       </div>
     </div>
   </div>
@@ -46,10 +49,17 @@ export default {
 }
 .main-container{
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
-.mail-title{
+.main-title{
   width: 100%;
   height: 64px;
   background-color: #2c3e50;
+}
+.main-content{
+  flex: 1;
+  overflow: auto hidden;
+  padding: 10px;
 }
 </style>

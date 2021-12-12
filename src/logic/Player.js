@@ -557,9 +557,25 @@ function getHashCode(str) {
   return (hash & 0x7FFFFFFF);
 }
 
-// 初始化
-(function init() {
-  const player = new Player()
-  player.freshStart('小树林','普通原木')
-})()
+
+const player = new Player()
+// player.bag.push('新手剑')
+// player.bag.push('新手肩甲')
+// player.bag.push('新手胸甲')
+// player.bag.push('新手护腕')
+// player.bag.push('新手鞋')
+// player.bag.push('新手戒指')
+// player.bag.push('新手项链')
+// player.bag.push('新手披风')
+player.bag.push(player.res.get('新手剑'), 1)
+player.bag.push(player.res.get('新手肩甲'), 1)
+player.bag.push(player.res.get('新手胸甲'), 1)
+player.bag.push(player.res.get('新手护腕'), 1)
+player.bag.push(player.res.get('新手鞋'), 1)
+player.bag.push(player.res.get('新手戒指'), 1)
+player.bag.push(player.res.get('新手项链'), 1)
+player.bag.push(player.res.get('新手披风'), 1)
+player.bag.push(player.res.get('小红药'), 20)
+
+export { player }
 
