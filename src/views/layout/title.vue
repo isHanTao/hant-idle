@@ -4,6 +4,12 @@
       <b>仓库</b>
     </div>
     <div class="title-options">
+      <div class="title-info">
+        <img @click="show_detail = !show_detail" class="hant-icon margin0" src="../../assets/icon/combat.svg" alt="">
+        <div v-show="show_detail" class="title-info-detail">
+          info
+        </div>
+      </div>
       <p>Last Cloud Save <br>
         <b>On 7 分 27 秒 ago</b>
       </p>
@@ -16,6 +22,11 @@
 
 <script>
 export default {
+  data () {
+    return {
+      show_detail: false
+    }
+  }
 }
 </script>
 
@@ -48,6 +59,22 @@ export default {
   box-shadow: #a9acac 2px 2px 0;
   cursor: pointer;
   margin: 0 5px;
+}
+.title-info{
+  position: relative;
+  cursor: pointer;
+}
+.title-info-detail{
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 15px);
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  background-color: #42b983;
+}
+.title-info{
+  margin-right: 10px;
 }
 
 </style>

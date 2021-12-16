@@ -41,6 +41,9 @@ body,html{
 .flex1{
   flex: 1;
 }
+.margin0{
+  margin: unset;
+}
 .margin10{
   margin: 0 10px;
 }
